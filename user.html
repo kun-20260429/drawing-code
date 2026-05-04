@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>图稿编号生成器</title>
+    <script src="https://cdn-go.cn/tcb-js-sdk@1.9.0/tcb.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -38,9 +39,7 @@
             font-size: 14px;
             font-weight: 500;
         }
-        .form-group {
-            margin-bottom: 20px;
-        }
+        .form-group { margin-bottom: 20px; }
         label {
             display: block;
             margin-bottom: 8px;
@@ -63,11 +62,7 @@
             background: white;
             box-shadow: 0 0 0 3px rgba(102, 187, 106, 0.1);
         }
-        .hint {
-            font-size: 12px;
-            color: #388E3C;
-            margin-top: 6px;
-        }
+        .hint { font-size: 12px; color: #388E3C; margin-top: 6px; }
         .btn {
             width: 100%;
             padding: 14px;
@@ -85,6 +80,7 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(102, 187, 106, 0.4);
         }
+        .btn:disabled { background: #BDBDBD; cursor: not-allowed; transform: none; }
         .btn-secondary {
             background: linear-gradient(135deg, #FFB74D 0%, #FFA726 100%);
             box-shadow: 0 4px 12px rgba(255, 183, 77, 0.3);
@@ -98,122 +94,73 @@
             display: none;
             box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
         }
-        .result-container.show {
-            display: block;
-            animation: slideIn 0.4s ease;
-        }
+        .result-container.show { display: block; animation: slideIn 0.4s ease; }
         @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .result-label {
-            color: #2E7D32;
-            font-size: 15px;
-            margin-bottom: 12px;
-            font-weight: 600;
-            text-align: center;
-        }
+        .result-label { color: #2E7D32; font-size: 15px; margin-bottom: 12px; font-weight: 600; text-align: center; }
         .result-code {
-            font-size: 24px;
-            font-weight: 700;
-            color: #F57C00;
-            background: white;
-            padding: 18px;
-            border-radius: 8px;
-            margin-bottom: 16px;
-            word-break: break-all;
-            text-align: center;
-            border: 2px solid #FFB300;
+            font-size: 24px; font-weight: 700; color: #F57C00; background: white;
+            padding: 18px; border-radius: 8px; margin-bottom: 16px;
+            word-break: break-all; text-align: center; border: 2px solid #FFB300;
         }
         .copy-btn {
-            width: 100%;
-            padding: 12px;
+            width: 100%; padding: 12px;
             background: linear-gradient(135deg, #66BB6A 0%, #4CAF50 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
+            color: white; border: none; border-radius: 8px;
+            font-size: 16px; font-weight: 600; cursor: pointer;
             box-shadow: 0 4px 12px rgba(102, 187, 106, 0.3);
         }
-        .copy-btn:hover {
-            box-shadow: 0 6px 16px rgba(102, 187, 106, 0.4);
-        }
+        .copy-btn:hover { box-shadow: 0 6px 16px rgba(102, 187, 106, 0.4); }
         .info-box {
             background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
-            border-left: 4px solid #66BB6A;
-            padding: 18px;
-            margin-top: 28px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(102, 187, 106, 0.2);
+            border-left: 4px solid #66BB6A; padding: 18px; margin-top: 28px;
+            border-radius: 8px; box-shadow: 0 2px 8px rgba(102, 187, 106, 0.2);
         }
-        .info-box h3 {
-            color: #2E7D32;
-            margin-bottom: 12px;
-            font-size: 17px;
-            font-weight: 700;
-        }
-        .info-box ul {
-            margin-left: 24px;
-            color: #388E3C;
-            font-size: 14px;
-        }
-        .info-box li {
-            margin-bottom: 8px;
-        }
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-        }
+        .info-box h3 { color: #2E7D32; margin-bottom: 12px; font-size: 17px; font-weight: 700; }
+        .info-box ul { margin-left: 24px; color: #388E3C; font-size: 14px; }
+        .info-box li { margin-bottom: 8px; }
+        .sync-status { text-align: center; padding: 12px; margin-top: 16px; border-radius: 8px; font-size: 13px; display: none; }
+        .sync-status.show { display: block; }
+        .sync-status.success { background: #E8F5E9; color: #2E7D32; }
+        .sync-status.error { background: #FFEBEE; color: #C62828; }
+        .sync-status.loading { background: #FFF3E0; color: #E65100; }
+        @media (max-width: 768px) { .container { padding: 20px; } }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🎨 图稿编号生成器</h1>
-        <p class="subtitle">简单、快速、专业的编号生成工具</p>
-
+        <p class="subtitle">简单、快速、专业的编号生成工具（云端同步版）</p>
         <div class="form-group">
             <label for="deptSelect">🏢 所属部门</label>
-            <select id="deptSelect">
-                <option value="">请选择部门</option>
-            </select>
+            <select id="deptSelect"><option value="">请选择部门</option></select>
         </div>
-
         <div class="form-group">
             <label for="realName">👤 您的姓名</label>
-            <input type="text" id="realName" placeholder="例如：张三三 或 John Smith">
+            <input type="text" id="realName" placeholder="例如：张三三">
             <div class="hint">输入什么姓名就显示什么姓名，原样显示</div>
         </div>
-
         <div class="form-group">
             <label for="drawingName">📄 图纸名称</label>
             <input type="text" id="drawingName" placeholder="例如：三对自粘底托">
             <div class="hint">请输入具体的产品或图纸名称</div>
         </div>
-
-        <button class="btn" onclick="generateCode()">✅ 生成编号</button>
-
+        <button class="btn" id="generateBtn" onclick="generateCode()">✅ 生成编号</button>
         <div class="result-container" id="resultContainer">
-            <h3 style="color: #2E7D32; margin-bottom: 16px; text-align: center; font-size: 20px;">✨ 编号生成成功！</h3>
+            <h3 style="color:#2E7D32;margin-bottom:16px;text-align:center;font-size:20px;">✨ 编号生成成功！</h3>
             <div class="result-label">您的唯一编号：</div>
             <div class="result-code" id="resultCode"></div>
-            <div style="display: flex; gap: 12px; justify-content: center;">
+            <div style="display:flex;gap:12px;justify-content:center;">
                 <button class="copy-btn" id="copyBtn" onclick="copyCode()">📋 复制编号</button>
                 <button class="copy-btn btn-secondary" onclick="resetForm()">🔄 继续生成</button>
             </div>
-            <div style="text-align: center; margin-top: 16px; color: #66BB6A; font-size: 13px; font-weight: 500;">
+            <div style="text-align:center;margin-top:16px;color:#66BB6A;font-size:13px;font-weight:500;">
                 生成时间：<span id="generateTime"></span>
             </div>
         </div>
-
+        <div class="sync-status" id="syncStatus"></div>
         <div class="info-box">
             <h3>📖 使用说明</h3>
             <ul>
@@ -223,126 +170,133 @@
                 <li>生成的编号可以一键复制</li>
                 <li>系统自动确保编号唯一性</li>
                 <li>同一人名一年内流水号从01-99顺延</li>
+                <li><strong>所有数据自动同步到云端，管理员可见</strong></li>
             </ul>
         </div>
     </div>
-
     <script>
-        const CONFIG = {
-            storageKeys: {
-                codes: 'drawing_codes_all',
-                departments: 'drawing_departments'
-            },
-            departments: {
-                'CY': '创研',
-                'W1': '外一',
-                'W2': '外二',
-                'W3': '外三',
-                'YY': '运营',
-                'NX': '内销',
-                'XG': '销管',
-                'SJ': '设计',
-                'CG': '采购'
-            }
+        var TCB_ENV = 'drawing-code-system-d2bjec35ae0b';
+        var app = null;
+        var db = null;
+        var departments = {
+            'CY': '创研', 'W1': '外一', 'W2': '外二', 'W3': '外三',
+            'YY': '运营', 'NX': '内销', 'XG': '销管', 'SJ': '设计', 'CG': '采购'
         };
 
-        function saveDepartments() {
-            localStorage.setItem(CONFIG.storageKeys.departments, JSON.stringify(CONFIG.departments));
-        }
-
-        function getDepartments() {
-            const stored = localStorage.getItem(CONFIG.storageKeys.departments);
-            if (stored) {
-                return JSON.parse(stored);
+        function initCloud() {
+            try {
+                if (typeof tcb === 'undefined') {
+                    console.error('腾讯云SDK未加载');
+                    showSync('云服务SDK加载失败，请检查网络', 'error');
+                    return;
+                }
+                app = tcb.init({ env: TCB_ENV });
+                var auth = app.auth({
+                    persistence: 'local'
+                });
+                auth.anonymousAuthProvider().signIn().then(function() {
+                    db = app.database();
+                    showSync('✓ 云服务已连接', 'success');
+                    console.log('匿名登录成功，数据库已就绪');
+                }).catch(function(err) {
+                    console.log('匿名登录失败，尝试直接连接:', err);
+                    db = app.database();
+                    showSync('✓ 云服务已连接', 'success');
+                });
+            } catch (e) {
+                console.error('云服务初始化失败:', e);
+                showSync('云服务连接失败: ' + e.message, 'error');
             }
-            saveDepartments();
-            return CONFIG.departments;
         }
 
-        function getTodayKey() {
-            const now = new Date();
-            return now.getFullYear() +
-                   String(now.getMonth() + 1).padStart(2, '0') +
-                   String(now.getDate()).padStart(2, '0');
+        function showSync(msg, type) {
+            var el = document.getElementById('syncStatus');
+            el.textContent = msg;
+            el.className = 'sync-status show ' + type;
+            if (type === 'success') {
+                setTimeout(function() { el.style.display = 'none'; }, 3000);
+            }
         }
 
-        function getYearKey() {
-            const now = new Date();
-            return now.getFullYear();
+        function getToday() {
+            var d = new Date();
+            return d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
         }
 
-        function generateCode() {
-            const dept = document.getElementById('deptSelect').value;
-            const realName = document.getElementById('realName').value.trim();
-            const drawingName = document.getElementById('drawingName').value.trim();
+        function getYear() { return new Date().getFullYear(); }
 
+        async function generateCode() {
+            var dept = document.getElementById('deptSelect').value;
+            var realName = document.getElementById('realName').value.trim();
+            var drawingName = document.getElementById('drawingName').value.trim();
             if (!dept) { alert('请选择部门'); return; }
             if (!realName) { alert('请输入您的姓名'); return; }
             if (!drawingName) { alert('请输入图纸名称'); return; }
 
-            const yearKey = getYearKey();
-            const userKey = dept + '-' + realName + '-' + yearKey;
+            var btn = document.getElementById('generateBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ 生成中...';
 
-            let allCodes = JSON.parse(localStorage.getItem(CONFIG.storageKeys.codes) || '[]');
-            const userYearCodes = allCodes.filter(code => code.userKey === userKey);
-            const serialNumber = String(userYearCodes.length + 1).padStart(2, '0');
+            var yearKey = getYear();
+            var userKey = dept + '-' + realName + '-' + yearKey;
 
-            const today = getTodayKey();
-            const fullCode = `${dept}-${realName}${today}${serialNumber}-${drawingName}`;
+            try {
+                showSync('正在生成编号...', 'loading');
+                var countResult = await db.collection('drawing_codes').where({ userKey: userKey }).count();
+                var serialNumber = String(countResult.total + 1).padStart(2, '0');
+                var today = getToday();
+                var fullCode = dept + '-' + realName + today + serialNumber + '-' + drawingName;
 
-            const record = {
-                id: Date.now(),
-                fullCode: fullCode,
-                realName: realName,
-                dept: dept,
-                drawingName: drawingName,
-                userKey: userKey,
-                serialNumber: serialNumber,
-                createdAt: new Date().toLocaleString('zh-CN'),
-                yearKey: yearKey,
-                todayKey: today
-            };
+                var record = {
+                    fullCode: fullCode, realName: realName, dept: dept,
+                    drawingName: drawingName, userKey: userKey, serialNumber: serialNumber,
+                    createdAt: new Date().toLocaleString('zh-CN'), yearKey: yearKey, todayKey: today
+                };
 
-            allCodes.push(record);
-            localStorage.setItem(CONFIG.storageKeys.codes, JSON.stringify(allCodes));
+                await db.collection('drawing_codes').add({ data: record });
 
-            document.getElementById('resultCode').textContent = fullCode;
-            document.getElementById('generateTime').textContent = record.createdAt;
-            document.getElementById('resultContainer').classList.add('show');
-
-            document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth' });
-
-            const copyBtn = document.getElementById('copyBtn');
-            copyBtn.textContent = '📋 复制编号';
+                document.getElementById('resultCode').textContent = fullCode;
+                document.getElementById('generateTime').textContent = record.createdAt;
+                document.getElementById('resultContainer').classList.add('show');
+                document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('copyBtn').textContent = '📋 复制编号';
+                showSync('✓ 编号已保存到云端', 'success');
+            } catch (error) {
+                console.error('生成编号失败:', error);
+                showSync('生成失败：' + error.message, 'error');
+                alert('生成编号失败：' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '✅ 生成编号';
+            }
         }
 
         function copyCode() {
-            const code = document.getElementById('resultCode').textContent;
-            navigator.clipboard.writeText(code).then(() => {
-                const copyBtn = document.getElementById('copyBtn');
-                copyBtn.textContent = '✅ 已复制！';
-                setTimeout(() => {
-                    copyBtn.textContent = '📋 复制编号';
-                }, 2000);
+            var code = document.getElementById('resultCode').textContent;
+            navigator.clipboard.writeText(code).then(function() {
+                var btn = document.getElementById('copyBtn');
+                btn.textContent = '✅ 已复制！';
+                setTimeout(function() { btn.textContent = '📋 复制编号'; }, 2000);
             });
         }
 
         function resetForm() {
             document.getElementById('drawingName').value = '';
             document.getElementById('resultContainer').classList.remove('show');
+            document.getElementById('syncStatus').style.display = 'none';
             document.getElementById('realName').focus();
         }
 
         window.onload = function() {
-            saveDepartments();
-
-            const depts = getDepartments();
-            const deptSelect = document.getElementById('deptSelect');
-            deptSelect.innerHTML = '<option value="">请选择部门</option>' +
-                Object.entries(depts).map(([code, name]) =>
-                    `<option value="${code}">${code} - ${name}</option>`
-                ).join('');
-
+            localStorage.setItem('drawing_departments', JSON.stringify(departments));
+            var deptSelect = document.getElementById('deptSelect');
+            var options = '<option value="">请选择部门</option>';
+            var keys = Object.keys(departments);
+            for (var i = 0; i < keys.length; i++) {
+                options += '<option value="' + keys[i] + '">' + keys[i] + ' - ' + departments[keys[i]] + '</option>';
+            }
+            deptSelect.innerHTML = options;
+            initCloud();
             document.getElementById('drawingName').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') generateCode();
             });

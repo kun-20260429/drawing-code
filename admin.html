@@ -234,11 +234,12 @@
             alert('配置已保存！');
         }
 
-        function callAPI(action, params) {
+        function callAPI(params) {
+            params.collection = 'drawing_codes';
             return fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: action, collection: 'drawing_codes', data: params })
+                body: JSON.stringify(params)
             }).then(function(res) { return res.json(); })
               .then(function(result) {
                   if (result.code === 0) return result.data;
@@ -275,7 +276,7 @@
             var yearKey = getYear();
             var userKey = dept + '-' + realName + '-' + yearKey;
             try {
-                var countResult = await callAPI('count', { query: { userKey: userKey } });
+                var countResult = await callAPI({ action: 'count', query: { userKey: userKey } });
                 var serialNumber = String(countResult.total + 1).padStart(2, '0');
                 var today = getToday();
                 var fullCode = dept + '-' + realName + today + serialNumber + '-' + drawingName;
@@ -285,7 +286,7 @@
                     serialNumber: serialNumber, createdAt: new Date().toLocaleString('zh-CN'),
                     yearKey: yearKey, todayKey: today
                 };
-                await callAPI('add', record);
+                await callAPI({ action: 'add', data: record });
                 document.getElementById('result-code').textContent = fullCode;
                 document.getElementById('result-box').classList.add('show');
                 document.getElementById('result-box').scrollIntoView({ behavior: 'smooth' });
@@ -316,7 +317,7 @@
 
         async function loadCloudData() {
             try {
-                var result = await callAPI('get', {});
+                var result = await callAPI({ action: 'get' });
                 cloudCodes = result.data || [];
             } catch (e) {
                 console.error('加载云端数据失败:', e);

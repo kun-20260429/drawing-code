@@ -147,11 +147,12 @@
             showSync('配置已保存，云服务已就绪', 'success');
         }
 
-        function callAPI(action, params) {
+        function callAPI(params) {
+            params.collection = 'drawing_codes';
             return fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: action, collection: 'drawing_codes', data: params })
+                body: JSON.stringify(params)
             }).then(function(res) { return res.json(); })
               .then(function(result) {
                   if (result.code === 0) return result.data;
@@ -182,7 +183,7 @@
             var userKey = dept + '-' + realName + '-' + yearKey;
             try {
                 showSync('正在生成编号...', 'loading');
-                var countResult = await callAPI('count', { query: { userKey: userKey } });
+                var countResult = await callAPI({ action: 'count', query: { userKey: userKey } });
                 var serialNumber = String(countResult.total + 1).padStart(2, '0');
                 var today = getToday();
                 var fullCode = dept + '-' + realName + today + serialNumber + '-' + drawingName;
@@ -191,7 +192,7 @@
                     drawingName: drawingName, userKey: userKey, serialNumber: serialNumber,
                     createdAt: new Date().toLocaleString('zh-CN'), yearKey: yearKey, todayKey: today
                 };
-                await callAPI('add', record);
+                await callAPI({ action: 'add', data: record });
                 document.getElementById('resultCode').textContent = fullCode;
                 document.getElementById('generateTime').textContent = record.createdAt;
                 document.getElementById('resultContainer').classList.add('show');

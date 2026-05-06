@@ -4,121 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>图稿编号生成器</title>
-    <script src="https://cdn-go.cn/tcb-js-sdk@1.9.0/tcb.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Microsoft YaHei', Arial, sans-serif;
             background: linear-gradient(135deg, #FFF8E1 0%, #FFE0B2 30%, #E8F5E9 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px;
         }
         .container {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-            padding: 36px;
-            max-width: 580px;
-            width: 100%;
-            border-left: 5px solid #66BB6A;
+            background: white; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            padding: 36px; max-width: 580px; width: 100%; border-left: 5px solid #66BB6A;
         }
-        h1 {
-            text-align: center;
-            color: #2E7D32;
-            margin-bottom: 8px;
-            font-size: 26px;
-            font-weight: 700;
-        }
-        .subtitle {
-            text-align: center;
-            color: #F57C00;
-            margin-bottom: 28px;
-            font-size: 14px;
-            font-weight: 500;
-        }
+        h1 { text-align: center; color: #2E7D32; margin-bottom: 8px; font-size: 26px; font-weight: 700; }
+        .subtitle { text-align: center; color: #F57C00; margin-bottom: 28px; font-size: 14px; font-weight: 500; }
         .form-group { margin-bottom: 20px; }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #F57C00;
-            font-weight: 600;
-            font-size: 15px;
-        }
+        label { display: block; margin-bottom: 8px; color: #F57C00; font-weight: 600; font-size: 15px; }
         input, select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #C8E6C9;
-            border-radius: 8px;
-            font-size: 15px;
-            transition: all 0.3s ease;
-            background: #F1F8E9;
+            width: 100%; padding: 12px; border: 2px solid #C8E6C9; border-radius: 8px;
+            font-size: 15px; transition: all 0.3s ease; background: #F1F8E9;
         }
-        input:focus, select:focus {
-            outline: none;
-            border-color: #66BB6A;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102, 187, 106, 0.1);
-        }
+        input:focus, select:focus { outline: none; border-color: #66BB6A; background: white; }
         .hint { font-size: 12px; color: #388E3C; margin-top: 6px; }
         .btn {
-            width: 100%;
-            padding: 14px;
+            width: 100%; padding: 14px;
             background: linear-gradient(135deg, #66BB6A 0%, #4CAF50 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 17px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(102, 187, 106, 0.3);
+            color: white; border: none; border-radius: 8px; font-size: 17px; font-weight: 700;
+            cursor: pointer; transition: all 0.3s ease;
         }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(102, 187, 106, 0.4);
-        }
+        .btn:hover { transform: translateY(-2px); }
         .btn:disabled { background: #BDBDBD; cursor: not-allowed; transform: none; }
-        .btn-secondary {
-            background: linear-gradient(135deg, #FFB74D 0%, #FFA726 100%);
-            box-shadow: 0 4px 12px rgba(255, 183, 77, 0.3);
-        }
+        .btn-secondary { background: linear-gradient(135deg, #FFB74D 0%, #FFA726 100%); }
         .result-container {
-            margin-top: 28px;
-            padding: 24px;
+            margin-top: 28px; padding: 24px;
             background: linear-gradient(135deg, #FFE08A 0%, #FFD54F 100%);
-            border-radius: 10px;
-            border: 2px solid #FFB300;
-            display: none;
-            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+            border-radius: 10px; border: 2px solid #FFB300; display: none;
         }
         .result-container.show { display: block; animation: slideIn 0.4s ease; }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .result-label { color: #2E7D32; font-size: 15px; margin-bottom: 12px; font-weight: 600; text-align: center; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         .result-code {
             font-size: 24px; font-weight: 700; color: #F57C00; background: white;
-            padding: 18px; border-radius: 8px; margin-bottom: 16px;
+            padding: 18px; border-radius: 8px; margin: 12px 0 16px;
             word-break: break-all; text-align: center; border: 2px solid #FFB300;
         }
         .copy-btn {
             width: 100%; padding: 12px;
             background: linear-gradient(135deg, #66BB6A 0%, #4CAF50 100%);
-            color: white; border: none; border-radius: 8px;
-            font-size: 16px; font-weight: 600; cursor: pointer;
-            box-shadow: 0 4px 12px rgba(102, 187, 106, 0.3);
+            color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;
         }
-        .copy-btn:hover { box-shadow: 0 6px 16px rgba(102, 187, 106, 0.4); }
         .info-box {
             background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
-            border-left: 4px solid #66BB6A; padding: 18px; margin-top: 28px;
-            border-radius: 8px; box-shadow: 0 2px 8px rgba(102, 187, 106, 0.2);
+            border-left: 4px solid #66BB6A; padding: 18px; margin-top: 28px; border-radius: 8px;
         }
-        .info-box h3 { color: #2E7D32; margin-bottom: 12px; font-size: 17px; font-weight: 700; }
+        .info-box h3 { color: #2E7D32; margin-bottom: 12px; font-size: 17px; }
         .info-box ul { margin-left: 24px; color: #388E3C; font-size: 14px; }
         .info-box li { margin-bottom: 8px; }
         .sync-status { text-align: center; padding: 12px; margin-top: 16px; border-radius: 8px; font-size: 13px; display: none; }
@@ -126,158 +63,164 @@
         .sync-status.success { background: #E8F5E9; color: #2E7D32; }
         .sync-status.error { background: #FFEBEE; color: #C62828; }
         .sync-status.loading { background: #FFF3E0; color: #E65100; }
+        .config-section {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            border: 2px solid #FFB74D; border-radius: 10px; padding: 18px; margin-bottom: 20px;
+        }
+        .config-section h4 { color: #E65100; font-size: 15px; margin-bottom: 12px; }
+        .config-section small { color: #BF360C; font-size: 11px; }
         @media (max-width: 768px) { .container { padding: 20px; } }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎨 图稿编号生成器</h1>
+        <h1>图稿编号生成器</h1>
         <p class="subtitle">简单、快速、专业的编号生成工具（云端同步版）</p>
+        <div class="config-section" id="configSection">
+            <h4>云端接口配置（首次使用需要设置）</h4>
+            <label style="font-size:13px;color:#E65100;">API地址：</label>
+            <input type="text" id="apiUrl" placeholder="https://xxx.ap-shanghai.app.tcloudbase.com/dbapi">
+            <small>此地址在腾讯云开发控制台「HTTP访问服务」中获取</small>
+            <div style="margin-top:12px;">
+                <button class="btn btn-secondary" style="font-size:14px;padding:10px;" onclick="saveConfig()">保存配置</button>
+            </div>
+        </div>
         <div class="form-group">
-            <label for="deptSelect">🏢 所属部门</label>
+            <label>所属部门</label>
             <select id="deptSelect"><option value="">请选择部门</option></select>
         </div>
         <div class="form-group">
-            <label for="realName">👤 您的姓名</label>
+            <label>您的姓名</label>
             <input type="text" id="realName" placeholder="例如：张三三">
             <div class="hint">输入什么姓名就显示什么姓名，原样显示</div>
         </div>
         <div class="form-group">
-            <label for="drawingName">📄 图纸名称</label>
+            <label>图纸名称</label>
             <input type="text" id="drawingName" placeholder="例如：三对自粘底托">
             <div class="hint">请输入具体的产品或图纸名称</div>
         </div>
-        <button class="btn" id="generateBtn" onclick="generateCode()">✅ 生成编号</button>
+        <button class="btn" id="generateBtn" onclick="generateCode()">生成编号</button>
         <div class="result-container" id="resultContainer">
-            <h3 style="color:#2E7D32;margin-bottom:16px;text-align:center;font-size:20px;">✨ 编号生成成功！</h3>
-            <div class="result-label">您的唯一编号：</div>
+            <h3 style="color:#2E7D32;margin-bottom:16px;text-align:center;font-size:20px;">编号生成成功！</h3>
             <div class="result-code" id="resultCode"></div>
             <div style="display:flex;gap:12px;justify-content:center;">
-                <button class="copy-btn" id="copyBtn" onclick="copyCode()">📋 复制编号</button>
-                <button class="copy-btn btn-secondary" onclick="resetForm()">🔄 继续生成</button>
+                <button class="copy-btn" id="copyBtn" onclick="copyCode()">复制编号</button>
+                <button class="copy-btn btn-secondary" onclick="resetForm()">继续生成</button>
             </div>
-            <div style="text-align:center;margin-top:16px;color:#66BB6A;font-size:13px;font-weight:500;">
+            <div style="text-align:center;margin-top:16px;color:#66BB6A;font-size:13px;">
                 生成时间：<span id="generateTime"></span>
             </div>
         </div>
         <div class="sync-status" id="syncStatus"></div>
         <div class="info-box">
-            <h3>📖 使用说明</h3>
+            <h3>使用说明</h3>
             <ul>
                 <li>选择您所在的部门</li>
                 <li>输入您的姓名（输入什么就显示什么）</li>
                 <li>输入图纸名称后点击生成</li>
                 <li>生成的编号可以一键复制</li>
-                <li>系统自动确保编号唯一性</li>
                 <li>同一人名一年内流水号从01-99顺延</li>
-                <li><strong>所有数据自动同步到云端，管理员可见</strong></li>
+                <li>所有数据自动同步到云端，管理员可见</li>
             </ul>
         </div>
     </div>
     <script>
-        var TCB_ENV = 'drawing-code-system-d2bjec35ae0b';
-        var app = null;
-        var db = null;
         var departments = {
             'CY': '创研', 'W1': '外一', 'W2': '外二', 'W3': '外三',
             'YY': '运营', 'NX': '内销', 'XG': '销管', 'SJ': '设计', 'CG': '采购'
         };
-
-        function initCloud() {
-            try {
-                if (typeof tcb === 'undefined') {
-                    console.error('腾讯云SDK未加载');
-                    showSync('云服务SDK加载失败，请检查网络', 'error');
-                    return;
-                }
-                app = tcb.init({ env: TCB_ENV });
-                var auth = app.auth({
-                    persistence: 'local'
-                });
-                auth.anonymousAuthProvider().signIn().then(function() {
-                    db = app.database();
-                    showSync('✓ 云服务已连接', 'success');
-                    console.log('匿名登录成功，数据库已就绪');
-                }).catch(function(err) {
-                    console.log('匿名登录失败，尝试直接连接:', err);
-                    db = app.database();
-                    showSync('✓ 云服务已连接', 'success');
-                });
-            } catch (e) {
-                console.error('云服务初始化失败:', e);
-                showSync('云服务连接失败: ' + e.message, 'error');
-            }
-        }
+        var API_URL = 'https://drawing-code-system-d2bjec35ae0b-1395997998.ap-shanghai.app.tcloudbase.com/dbapi';
 
         function showSync(msg, type) {
             var el = document.getElementById('syncStatus');
             el.textContent = msg;
             el.className = 'sync-status show ' + type;
-            if (type === 'success') {
-                setTimeout(function() { el.style.display = 'none'; }, 3000);
-            }
+            if (type === 'success') setTimeout(function() { el.style.display = 'none'; }, 3000);
+        }
+
+        function saveConfig() {
+            var url = document.getElementById('apiUrl').value.trim();
+            if (!url) { alert('请输入API地址'); return; }
+            localStorage.setItem('drawing_api_url', url);
+            API_URL = url;
+            document.getElementById('configSection').style.display = 'none';
+            showSync('配置已保存，云服务已就绪', 'success');
+        }
+
+        function callAPI(action, params) {
+            return fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: action, collection: 'drawing_codes', data: params })
+            }).then(function(res) { return res.json(); })
+              .then(function(result) {
+                  if (result.code === 0) return result.data;
+                  throw new Error(result.message || '操作失败');
+              });
         }
 
         function getToday() {
             var d = new Date();
             return d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
         }
-
         function getYear() { return new Date().getFullYear(); }
 
         async function generateCode() {
+            if (!API_URL) {
+                document.getElementById('configSection').style.display = 'block';
+                alert('请先配置云端API地址'); return;
+            }
             var dept = document.getElementById('deptSelect').value;
             var realName = document.getElementById('realName').value.trim();
             var drawingName = document.getElementById('drawingName').value.trim();
             if (!dept) { alert('请选择部门'); return; }
             if (!realName) { alert('请输入您的姓名'); return; }
             if (!drawingName) { alert('请输入图纸名称'); return; }
-
             var btn = document.getElementById('generateBtn');
-            btn.disabled = true;
-            btn.textContent = '⏳ 生成中...';
-
+            btn.disabled = true; btn.textContent = '生成中...';
             var yearKey = getYear();
             var userKey = dept + '-' + realName + '-' + yearKey;
-
             try {
                 showSync('正在生成编号...', 'loading');
-                var countResult = await db.collection('drawing_codes').where({ userKey: userKey }).count();
+                var countResult = await callAPI('count', { query: { userKey: userKey } });
                 var serialNumber = String(countResult.total + 1).padStart(2, '0');
                 var today = getToday();
                 var fullCode = dept + '-' + realName + today + serialNumber + '-' + drawingName;
-
                 var record = {
                     fullCode: fullCode, realName: realName, dept: dept,
                     drawingName: drawingName, userKey: userKey, serialNumber: serialNumber,
                     createdAt: new Date().toLocaleString('zh-CN'), yearKey: yearKey, todayKey: today
                 };
-
-                await db.collection('drawing_codes').add({ data: record });
-
+                await callAPI('add', record);
                 document.getElementById('resultCode').textContent = fullCode;
                 document.getElementById('generateTime').textContent = record.createdAt;
                 document.getElementById('resultContainer').classList.add('show');
                 document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth' });
-                document.getElementById('copyBtn').textContent = '📋 复制编号';
-                showSync('✓ 编号已保存到云端', 'success');
+                document.getElementById('copyBtn').textContent = '复制编号';
+                showSync('编号已保存到云端', 'success');
             } catch (error) {
-                console.error('生成编号失败:', error);
                 showSync('生成失败：' + error.message, 'error');
                 alert('生成编号失败：' + error.message);
             } finally {
-                btn.disabled = false;
-                btn.textContent = '✅ 生成编号';
+                btn.disabled = false; btn.textContent = '生成编号';
             }
         }
 
         function copyCode() {
             var code = document.getElementById('resultCode').textContent;
-            navigator.clipboard.writeText(code).then(function() {
-                var btn = document.getElementById('copyBtn');
-                btn.textContent = '✅ 已复制！';
-                setTimeout(function() { btn.textContent = '📋 复制编号'; }, 2000);
-            });
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(code).then(function() {
+                    var btn = document.getElementById('copyBtn');
+                    btn.textContent = '已复制！';
+                    setTimeout(function() { btn.textContent = '复制编号'; }, 2000);
+                });
+            } else {
+                var ta = document.createElement('textarea');
+                ta.value = code; document.body.appendChild(ta);
+                ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+                document.getElementById('copyBtn').textContent = '已复制！';
+                setTimeout(function() { document.getElementById('copyBtn').textContent = '复制编号'; }, 2000);
+            }
         }
 
         function resetForm() {
@@ -288,7 +231,6 @@
         }
 
         window.onload = function() {
-            localStorage.setItem('drawing_departments', JSON.stringify(departments));
             var deptSelect = document.getElementById('deptSelect');
             var options = '<option value="">请选择部门</option>';
             var keys = Object.keys(departments);
@@ -296,13 +238,16 @@
                 options += '<option value="' + keys[i] + '">' + keys[i] + ' - ' + departments[keys[i]] + '</option>';
             }
             deptSelect.innerHTML = options;
-            initCloud();
-            document.getElementById('drawingName').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') generateCode();
-            });
-            document.getElementById('realName').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') document.getElementById('drawingName').focus();
-            });
+            if (API_URL) {
+                document.getElementById('apiUrl').value = API_URL;
+                document.getElementById('configSection').style.display = 'none';
+                showSync('云服务已就绪', 'success');
+            } else {
+                document.getElementById('configSection').style.display = 'block';
+                showSync('请先配置云端API地址', 'error');
+            }
+            document.getElementById('drawingName').addEventListener('keypress', function(e) { if (e.key === 'Enter') generateCode(); });
+            document.getElementById('realName').addEventListener('keypress', function(e) { if (e.key === 'Enter') document.getElementById('drawingName').focus(); });
         };
     </script>
 </body>

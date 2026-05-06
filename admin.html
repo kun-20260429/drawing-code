@@ -4,14 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>图稿编号管理系统 - 管理员</title>
-    <script src="https://cdn-go.cn/tcb-js-sdk@1.9.0/tcb.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Microsoft YaHei', Arial, sans-serif;
             background: linear-gradient(135deg, #FFF8E1 0%, #FFE0B2 30%, #E8F5E9 100%);
-            min-height: 100vh;
-            padding: 20px;
+            min-height: 100vh; padding: 20px;
         }
         .header {
             background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px;
@@ -23,7 +21,7 @@
         .nav-btn {
             padding: 10px 20px; background: #66BB6A; color: white; border: none;
             border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500;
-            transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(102, 187, 106, 0.3);
+            transition: all 0.3s ease;
         }
         .nav-btn:hover { background: #4CAF50; transform: translateY(-2px); }
         .nav-btn.active { background: #43A047; }
@@ -36,17 +34,15 @@
         .form-group label { color: #F57C00; font-weight: 600; margin-bottom: 8px; font-size: 15px; display: block; }
         .form-group input, .form-group select {
             width: 100%; padding: 12px; border: 2px solid #C8E6C9; border-radius: 8px;
-            font-size: 15px; transition: all 0.3s ease; background: #F1F8E9;
+            font-size: 15px; background: #F1F8E9;
         }
-        .form-group input:focus, .form-group select:focus {
-            outline: none; border-color: #66BB6A; background: white;
-        }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #66BB6A; background: white; }
         .hint { font-size: 12px; color: #388E3C; margin-top: 4px; }
         .btn {
             padding: 14px 28px;
             background: linear-gradient(135deg, #66BB6A 0%, #4CAF50 100%);
             color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600;
-            cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(102, 187, 106, 0.3);
+            cursor: pointer; transition: all 0.3s ease;
         }
         .btn:hover { transform: translateY(-2px); }
         .btn-secondary { background: linear-gradient(135deg, #FFB74D 0%, #FFA726 100%); }
@@ -57,10 +53,7 @@
             margin-top: 20px; display: none;
         }
         .result-box.show { display: block; animation: slideIn 0.4s ease; }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         .result-code {
             font-size: 26px; font-weight: 700; color: #F57C00; background: white;
             padding: 18px; border-radius: 8px; margin: 16px 0;
@@ -68,10 +61,7 @@
         }
         table { width: 100%; border-collapse: collapse; margin-top: 16px; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #E8F5E9; }
-        th {
-            background: linear-gradient(135deg, #FFE08A 0%, #FFD54F 100%);
-            font-weight: 600; color: #F57C00; font-size: 13px;
-        }
+        th { background: linear-gradient(135deg, #FFE08A 0%, #FFD54F 100%); font-weight: 600; color: #F57C00; font-size: 13px; }
         tr:hover { background: #FFFDE7; }
         .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 20px; }
         .stat-card {
@@ -96,11 +86,15 @@
         .info-box h3 { color: #2E7D32; margin-bottom: 12px; font-size: 17px; font-weight: 700; }
         .info-box ul { margin-left: 24px; color: #388E3C; font-size: 14px; }
         .info-box li { margin-bottom: 8px; }
-        .pagination-controls {
-            margin-top: 16px; display: flex; justify-content: space-between; align-items: center;
-        }
+        .pagination-controls { margin-top: 16px; display: flex; justify-content: space-between; align-items: center; }
         .page-size-selector { padding: 8px; border: 1px solid #C8E6C9; border-radius: 6px; font-size: 14px; }
         .pagination-info { color: #66BB6A; font-size: 14px; font-weight: 600; }
+        .config-section {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            border: 2px solid #FFB74D; border-radius: 10px; padding: 18px; margin-bottom: 20px;
+        }
+        .config-section h4 { color: #E65100; font-size: 15px; margin-bottom: 12px; }
+        .config-section small { color: #BF360C; font-size: 11px; }
         @media (max-width: 768px) {
             .nav-buttons { flex-direction: column; }
             .stats { grid-template-columns: repeat(2, 1fr); }
@@ -108,20 +102,30 @@
     </style>
 </head>
 <body>
+    <div class="config-section" id="configSection">
+        <h4>云端接口配置（首次使用需要设置）</h4>
+        <label style="font-size:13px;color:#E65100;">API地址：</label>
+        <input type="text" id="apiUrl" style="width:100%;padding:10px;border:2px solid #FFB74D;border-radius:6px;font-size:14px;" placeholder="https://xxx.ap-shanghai.app.tcloudbase.com/dbapi">
+        <small>此地址在腾讯云开发控制台「HTTP访问服务」中获取</small>
+        <div style="margin-top:12px;">
+            <button class="btn btn-secondary" style="font-size:14px;padding:10px;" onclick="saveConfig()">保存配置</button>
+        </div>
+    </div>
+
     <div class="header">
-        <h1>🎨 图稿编号管理系统 - 管理员控制台</h1>
-        <p style="margin-top: 6px;">您可以生成编号并查看所有历史数据和真实姓名（云端同步版）</p>
+        <h1>图稿编号管理系统 - 管理员控制台</h1>
+        <p style="margin-top: 6px;">您可以生成编号并查看所有历史数据（云端同步版）</p>
         <div class="nav-buttons">
-            <button class="nav-btn active" onclick="showSection('generate')">📝 生成编号</button>
-            <button class="nav-btn" onclick="showSection('history')">📋 历史记录</button>
-            <button class="nav-btn" onclick="showSection('stats')">📊 统计数据</button>
+            <button class="nav-btn active" onclick="showSection('generate')">生成编号</button>
+            <button class="nav-btn" onclick="showSection('history')">历史记录</button>
+            <button class="nav-btn" onclick="showSection('stats')">统计数据</button>
         </div>
     </div>
 
     <div id="generate-section" class="content-section">
-        <h2 style="margin-bottom:20px;color:#F57C00;font-size:22px;">📝 生成新编号</h2>
+        <h2 style="margin-bottom:20px;color:#F57C00;font-size:22px;">生成新编号</h2>
         <div class="info-box">
-            <h3>💡 使用说明</h3>
+            <h3>使用说明</h3>
             <ul>
                 <li><strong>姓名原样显示</strong>：输入什么显示什么</li>
                 <li><strong>流水号规则</strong>：同一人名一年内从01-99顺延</li>
@@ -130,44 +134,44 @@
             </ul>
         </div>
         <div class="form-group">
-            <label>🏢 部门选择</label>
+            <label>部门选择</label>
             <select id="deptSelect" onchange="updatePreview()"><option value="">请选择部门</option></select>
         </div>
         <div class="form-group">
-            <label>👤 您的姓名</label>
+            <label>您的姓名</label>
             <input type="text" id="realName" placeholder="例如：张三三" oninput="updatePreview()">
             <div class="hint">输入什么姓名就显示什么姓名，原样显示</div>
         </div>
         <div class="form-group">
-            <label>📄 图纸名称</label>
+            <label>图纸名称</label>
             <input type="text" id="drawingName" placeholder="例如：三对自粘底托" oninput="updatePreview()">
             <div class="hint">请输入具体的产品或图纸名称</div>
         </div>
         <div class="form-group">
-            <label>📝 备注说明（可选）</label>
+            <label>备注说明（可选）</label>
             <input type="text" id="notes" placeholder="例如：客户样品、紧急订单">
         </div>
         <div class="preview-box">
-            <div class="preview-title">👁️ 编号预览</div>
+            <div class="preview-title">编号预览</div>
             <div class="preview-code" id="preview">请填写完整信息后查看预览</div>
         </div>
-        <button class="btn" onclick="generateCode()">✅ 生成编号并保存</button>
+        <button class="btn" onclick="generateCode()">生成编号并保存</button>
         <div id="result-box" class="result-box">
-            <h3 style="color:#2E7D32;margin-bottom:16px;text-align:center;font-size:20px;">🎉 编号生成成功！</h3>
+            <h3 style="color:#2E7D32;margin-bottom:16px;text-align:center;font-size:20px;">编号生成成功！</h3>
             <div class="result-code" id="result-code"></div>
             <div style="display:flex;gap:12px;justify-content:center;">
-                <button class="btn" onclick="copyCode()">📋 复制编号</button>
-                <button class="btn btn-secondary" onclick="resetForm()">🔄 继续生成</button>
+                <button class="btn" onclick="copyCode()">复制编号</button>
+                <button class="btn btn-secondary" onclick="resetForm()">继续生成</button>
             </div>
         </div>
     </div>
 
     <div id="history-section" class="content-section hidden">
-        <h2 style="margin-bottom:20px;color:#F57C00;font-size:22px;">📋 所有编号记录（云端数据）</h2>
+        <h2 style="margin-bottom:20px;color:#F57C00;font-size:22px;">所有编号记录（云端数据）</h2>
         <div style="margin-bottom:16px;display:flex;gap:12px;flex-wrap:wrap;">
-            <button class="btn btn-secondary btn-small" onclick="exportExcel()">📊 导出为Excel</button>
-            <button class="btn btn-secondary btn-small" onclick="exportJSON()">💾 导出为JSON</button>
-            <button class="btn btn-secondary btn-small" onclick="loadHistory()">🔄 刷新列表</button>
+            <button class="btn btn-secondary btn-small" onclick="exportExcel()">导出为Excel</button>
+            <button class="btn btn-secondary btn-small" onclick="exportJSON()">导出为JSON</button>
+            <button class="btn btn-secondary btn-small" onclick="loadHistory()">刷新列表</button>
         </div>
         <div style="overflow-x:auto;">
             <table id="history-table">
@@ -197,7 +201,7 @@
     </div>
 
     <div id="stats-section" class="content-section hidden">
-        <h2 style="margin-bottom:20px;color:#F57C00;font-size:22px;">📊 数据统计（云端数据）</h2>
+        <h2 style="margin-bottom:20px;color:#F57C00;font-size:22px;">数据统计（云端数据）</h2>
         <div class="stats">
             <div class="stat-card"><div class="stat-label">总编号数</div><div class="stat-number" id="total-count">0</div></div>
             <div class="stat-card"><div class="stat-label">今年编号数</div><div class="stat-number" id="year-count">0</div></div>
@@ -214,55 +218,38 @@
     </div>
 
     <script>
-        var TCB_ENV = 'drawing-code-system-d2bjec35ae0b';
-        var app = null;
-        var db = null;
-        var cloudCodes = [];
         var departments = {
             'CY': '创研', 'W1': '外一', 'W2': '外二', 'W3': '外三',
             'YY': '运营', 'NX': '内销', 'XG': '销管', 'SJ': '设计', 'CG': '采购'
         };
+        var API_URL = 'https://drawing-code-system-d2bjec35ae0b-1395997998.ap-shanghai.app.tcloudbase.com/dbapi';
+        var cloudCodes = [];
 
-        function initCloud() {
-            try {
-                if (typeof tcb === 'undefined') {
-                    console.error('腾讯云SDK未加载');
-                    alert('云服务SDK加载失败，请检查网络');
-                    return;
-                }
-                app = tcb.init({ env: TCB_ENV });
-                var auth = app.auth({
-                    persistence: 'local'
-                });
-                auth.anonymousAuthProvider().signIn().then(function() {
-                    db = app.database();
-                    console.log('匿名登录成功，数据库已就绪');
-                }).catch(function(err) {
-                    console.log('匿名登录失败，尝试直接连接:', err);
-                    db = app.database();
-                });
-            } catch (e) {
-                console.error('云服务初始化失败:', e);
-                alert('云服务连接失败: ' + e.message);
-            }
+        function saveConfig() {
+            var url = document.getElementById('apiUrl').value.trim();
+            if (!url) { alert('请输入API地址'); return; }
+            localStorage.setItem('drawing_api_url', url);
+            API_URL = url;
+            document.getElementById('configSection').style.display = 'none';
+            alert('配置已保存！');
         }
 
-        async function loadCloudData() {
-            try {
-                var result = await db.collection('drawing_codes').orderBy('createdAt', 'desc').get();
-                cloudCodes = result.data || [];
-                console.log('云端数据加载成功，共', cloudCodes.length, '条');
-            } catch (e) {
-                console.error('加载云端数据失败:', e);
-                cloudCodes = [];
-            }
+        function callAPI(action, params) {
+            return fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: action, collection: 'drawing_codes', data: params })
+            }).then(function(res) { return res.json(); })
+              .then(function(result) {
+                  if (result.code === 0) return result.data;
+                  throw new Error(result.message || '操作失败');
+              });
         }
 
         function getToday() {
             var d = new Date();
             return d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
         }
-
         function getYear() { return new Date().getFullYear(); }
 
         function updatePreview() {
@@ -277,6 +264,7 @@
         }
 
         async function generateCode() {
+            if (!API_URL) { document.getElementById('configSection').style.display = 'block'; alert('请先配置API地址'); return; }
             var dept = document.getElementById('deptSelect').value;
             var realName = document.getElementById('realName').value.trim();
             var drawingName = document.getElementById('drawingName').value.trim();
@@ -284,38 +272,38 @@
             if (!dept) { alert('请选择部门'); return; }
             if (!realName) { alert('请填写您的姓名'); return; }
             if (!drawingName) { alert('请填写图纸名称'); return; }
-
             var yearKey = getYear();
             var userKey = dept + '-' + realName + '-' + yearKey;
-
             try {
-                var countResult = await db.collection('drawing_codes').where({ userKey: userKey }).count();
+                var countResult = await callAPI('count', { query: { userKey: userKey } });
                 var serialNumber = String(countResult.total + 1).padStart(2, '0');
                 var today = getToday();
                 var fullCode = dept + '-' + realName + today + serialNumber + '-' + drawingName;
-
                 var record = {
                     fullCode: fullCode, realName: realName, dept: dept,
                     drawingName: drawingName, notes: notes, userKey: userKey,
                     serialNumber: serialNumber, createdAt: new Date().toLocaleString('zh-CN'),
                     yearKey: yearKey, todayKey: today
                 };
-
-                await db.collection('drawing_codes').add({ data: record });
-
+                await callAPI('add', record);
                 document.getElementById('result-code').textContent = fullCode;
                 document.getElementById('result-box').classList.add('show');
                 document.getElementById('result-box').scrollIntoView({ behavior: 'smooth' });
-                await loadCloudData();
             } catch (error) {
-                console.error('生成编号失败:', error);
                 alert('生成编号失败：' + error.message);
             }
         }
 
         function copyCode() {
             var code = document.getElementById('result-code').textContent;
-            navigator.clipboard.writeText(code).then(function() { alert('编号已复制到剪贴板！'); });
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(code).then(function() { alert('编号已复制到剪贴板！'); });
+            } else {
+                var ta = document.createElement('textarea');
+                ta.value = code; document.body.appendChild(ta);
+                ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+                alert('编号已复制到剪贴板！');
+            }
         }
 
         function resetForm() {
@@ -326,23 +314,31 @@
             document.getElementById('realName').focus();
         }
 
+        async function loadCloudData() {
+            try {
+                var result = await callAPI('get', {});
+                cloudCodes = result.data || [];
+            } catch (e) {
+                console.error('加载云端数据失败:', e);
+                cloudCodes = [];
+            }
+        }
+
         async function loadHistory() {
+            if (!API_URL) { alert('请先配置API地址'); return; }
             var tbody = document.getElementById('history-tbody');
             var pageSize = parseInt(document.getElementById('page-size').value);
             tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;">正在加载云端数据...</td></tr>';
-
             try {
                 await loadCloudData();
                 var allCodes = cloudCodes;
-                var end = pageSize === 999999 ? allCodes.length : pageSize;
+                var end = pageSize === 999999 ? allCodes.length : Math.min(pageSize, allCodes.length);
                 var show = allCodes.slice(0, end);
-
                 if (show.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#66BB6A;padding:32px;">暂无记录</td></tr>';
                     document.getElementById('history-info').textContent = '共 0 条记录';
                     return;
                 }
-
                 var html = '';
                 for (var i = 0; i < show.length; i++) {
                     var c = show[i];
@@ -357,29 +353,22 @@
                         '</tr>';
                 }
                 tbody.innerHTML = html;
-
-                if (pageSize === 999999) {
-                    document.getElementById('history-info').textContent = '共 ' + allCodes.length + ' 条记录';
-                } else {
-                    document.getElementById('history-info').textContent = '显示 1-' + end + ' 条，共 ' + allCodes.length + ' 条';
-                }
+                document.getElementById('history-info').textContent = '共 ' + allCodes.length + ' 条记录';
             } catch (error) {
-                console.error('加载历史记录失败:', error);
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#EF5350;padding:32px;">加载失败，请重试</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#EF5350;padding:32px;">加载失败：' + error.message + '</td></tr>';
             }
         }
 
         async function loadStats() {
+            if (!API_URL) { alert('请先配置API地址'); return; }
             try {
                 await loadCloudData();
                 var allCodes = cloudCodes;
                 var today = getToday();
                 var yearKey = getYear();
-
                 var todayCount = 0, yearCount = 0;
                 var userSet = {};
                 var deptStats = {};
-
                 for (var i = 0; i < allCodes.length; i++) {
                     var c = allCodes[i];
                     if (c.todayKey === today) todayCount++;
@@ -388,12 +377,10 @@
                     if (!deptStats[c.dept]) deptStats[c.dept] = 0;
                     deptStats[c.dept]++;
                 }
-
                 document.getElementById('total-count').textContent = allCodes.length;
                 document.getElementById('year-count').textContent = yearCount;
                 document.getElementById('today-count').textContent = todayCount;
                 document.getElementById('user-count').textContent = Object.keys(userSet).length;
-
                 var deptHtml = '';
                 var deptKeys = Object.keys(deptStats).sort(function(a, b) { return deptStats[b] - deptStats[a]; });
                 for (var j = 0; j < deptKeys.length; j++) {
@@ -447,7 +434,6 @@
         }
 
         window.onload = function() {
-            localStorage.setItem('drawing_departments', JSON.stringify(departments));
             var deptSelect = document.getElementById('deptSelect');
             var options = '<option value="">请选择部门</option>';
             var keys = Object.keys(departments);
@@ -455,18 +441,15 @@
                 options += '<option value="' + keys[i] + '">' + keys[i] + ' - ' + departments[keys[i]] + '</option>';
             }
             deptSelect.innerHTML = options;
-
-            initCloud();
-
-            document.getElementById('notes').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') generateCode();
-            });
-            document.getElementById('drawingName').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') document.getElementById('notes').focus();
-            });
-            document.getElementById('realName').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') document.getElementById('drawingName').focus();
-            });
+            if (API_URL) {
+                document.getElementById('apiUrl').value = API_URL;
+                document.getElementById('configSection').style.display = 'none';
+            } else {
+                document.getElementById('configSection').style.display = 'block';
+            }
+            document.getElementById('notes').addEventListener('keypress', function(e) { if (e.key === 'Enter') generateCode(); });
+            document.getElementById('drawingName').addEventListener('keypress', function(e) { if (e.key === 'Enter') document.getElementById('notes').focus(); });
+            document.getElementById('realName').addEventListener('keypress', function(e) { if (e.key === 'Enter') document.getElementById('drawingName').focus(); });
         };
     </script>
 </body>

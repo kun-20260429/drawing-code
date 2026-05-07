@@ -99,6 +99,11 @@
             <input type="text" id="drawingName" placeholder="例如：三对自粘底托">
             <div class="hint">请输入具体的产品或图纸名称</div>
         </div>
+        <div class="form-group">
+            <label>备注说明 <span style="font-weight:normal;color:#388E3C;">（选填）</span></label>
+            <input type="text" id="notes" placeholder="例如：打样稿 / 大货稿 / V1 / V2 / A版 / 型号代码等">
+            <div class="hint">填写后将显示在编号名称中，如：单对托(打样稿)、底托(V2)，不填则不显示</div>
+        </div>
         <button class="btn" id="generateBtn" onclick="generateCode()">生成编号</button>
         <div class="result-container" id="resultContainer">
             <h3 style="color:#2E7D32;margin-bottom:16px;text-align:center;font-size:20px;">编号生成成功！</h3>
@@ -118,6 +123,7 @@
                 <li>选择您所在的部门</li>
                 <li>输入您的姓名（输入什么就显示什么）</li>
                 <li>输入图纸名称后点击生成</li>
+                <li>备注说明为选填项，填写后显示在名称中，如：单对托(打样稿)</li>
                 <li>生成的编号可以一键复制</li>
                 <li>同一人名一年内流水号从01-99顺延</li>
                 <li>所有数据自动同步到云端，管理员可见</li>
@@ -174,9 +180,11 @@
             var dept = document.getElementById('deptSelect').value;
             var realName = document.getElementById('realName').value.trim();
             var drawingName = document.getElementById('drawingName').value.trim();
+            var notes = document.getElementById('notes').value.trim();
             if (!dept) { alert('请选择部门'); return; }
             if (!realName) { alert('请输入您的姓名'); return; }
             if (!drawingName) { alert('请输入图纸名称'); return; }
+            var displayName = notes ? drawingName + '(' + notes + ')' : drawingName;
             var btn = document.getElementById('generateBtn');
             btn.disabled = true; btn.textContent = '生成中...';
             var yearKey = getYear();
@@ -186,10 +194,10 @@
                 var countResult = await callAPI({ action: 'count', query: { userKey: userKey } });
                 var serialNumber = String(countResult.total + 1).padStart(2, '0');
                 var today = getToday();
-                var fullCode = dept + '-' + realName + today + serialNumber + '-' + drawingName;
+                var fullCode = dept + '-' + realName + today + serialNumber + '-' + displayName;
                 var record = {
                     fullCode: fullCode, realName: realName, dept: dept,
-                    drawingName: drawingName, userKey: userKey, serialNumber: serialNumber,
+                    drawingName: displayName, notes: notes, userKey: userKey, serialNumber: serialNumber,
                     createdAt: new Date().toLocaleString('zh-CN'), yearKey: yearKey, todayKey: today
                 };
                 await callAPI({ action: 'add', data: record });
@@ -226,6 +234,7 @@
 
         function resetForm() {
             document.getElementById('drawingName').value = '';
+            document.getElementById('notes').value = '';
             document.getElementById('resultContainer').classList.remove('show');
             document.getElementById('syncStatus').style.display = 'none';
             document.getElementById('realName').focus();
@@ -247,7 +256,8 @@
                 document.getElementById('configSection').style.display = 'block';
                 showSync('请先配置云端API地址', 'error');
             }
-            document.getElementById('drawingName').addEventListener('keypress', function(e) { if (e.key === 'Enter') generateCode(); });
+            document.getElementById('drawingName').addEventListener('keypress', function(e) { if (e.key === 'Enter') document.getElementById('notes').focus(); });
+            document.getElementById('notes').addEventListener('keypress', function(e) { if (e.key === 'Enter') generateCode(); });
             document.getElementById('realName').addEventListener('keypress', function(e) { if (e.key === 'Enter') document.getElementById('drawingName').focus(); });
         };
     </script>

@@ -293,7 +293,7 @@
                     fullCode: fullCode, realName: realName, dept: dept,
                     drawingName: drawingName, notes: notes, userKey: userKey,
                     serialNumber: serialNumber, createdAt: new Date().toLocaleString('zh-CN'),
-                    yearKey: yearKey, todayKey: today
+                    yearKey: yearKey, todayKey: today, timestamp: Date.now()
                 };
                 await callAPI({ action: 'add', data: record });
                 document.getElementById('result-code').textContent = fullCode;
@@ -328,6 +328,7 @@
             try {
                 var result = await callAPI({ action: 'get' });
                 cloudCodes = result.data || [];
+                cloudCodes.sort(function(a, b) { return (b.timestamp || 0) - (a.timestamp || 0); });
             } catch (e) {
                 console.error('加载云端数据失败:', e);
                 cloudCodes = [];

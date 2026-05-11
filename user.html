@@ -198,7 +198,8 @@
                 var record = {
                     fullCode: fullCode, realName: realName, dept: dept,
                     drawingName: displayName, notes: notes, userKey: userKey, serialNumber: serialNumber,
-                    createdAt: new Date().toLocaleString('zh-CN'), yearKey: yearKey, todayKey: today
+                    createdAt: new Date().toLocaleString('zh-CN'), yearKey: yearKey, todayKey: today,
+                    timestamp: Date.now()
                 };
                 await callAPI({ action: 'add', data: record });
                 document.getElementById('resultCode').textContent = fullCode;
